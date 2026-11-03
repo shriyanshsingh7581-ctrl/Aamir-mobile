@@ -5,7 +5,6 @@ import {
   MessageCircle,
   Navigation,
   Clock,
-  ShieldCheck,
 } from 'lucide-react';
 import { SUPPORTED_BRANDS } from '../data/initialData';
 import {
@@ -14,10 +13,6 @@ import {
   SHOP_ADDRESS,
   buildWhatsAppUrl,
 } from '../utils/storeLogic';
-
-interface ShopGalleryAndFooterProps {
-  onOpenAdmin: () => void;
-}
 
 const SHOP_SHOWCASE_CARDS = [
   {
@@ -54,9 +49,7 @@ const SHOP_SHOWCASE_CARDS = [
   },
 ];
 
-export const ShopGalleryAndFooter: React.FC<ShopGalleryAndFooterProps> = ({
-  onOpenAdmin,
-}) => {
+export const ShopGalleryAndFooter: React.FC = () => {
   const googleMapsUrl =
     'https://www.google.com/maps/search/?api=1&query=Purana+Dhampur+Chungi+Kalagarh+Road+Dhampur+Bijnor+UP+246761';
 
@@ -197,14 +190,17 @@ export const ShopGalleryAndFooter: React.FC<ShopGalleryAndFooterProps> = ({
                   <Navigation className="w-4 h-4" />
                   <span>Google Maps Direction</span>
                 </a>
-                <button
-                  type="button"
-                  onClick={onOpenAdmin}
-                  className="w-full py-2.5 px-3 bg-slate-900 hover:bg-slate-800 text-amber-400 border border-amber-400/50 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5"
+                <a
+                  href={buildWhatsAppUrl(
+                    'Hello Aamir Mobile Dhampur! I visited your website and want to enquire.'
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5"
                 >
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>Store Admin Login (PIN: 7777)</span>
-                </button>
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Chat on WhatsApp (9897060816)</span>
+                </a>
               </div>
             </div>
           </div>
@@ -289,7 +285,7 @@ export const ShopGalleryAndFooter: React.FC<ShopGalleryAndFooterProps> = ({
               Chungi, Kalagarh Road, Dhampur (Bijnor) U.P. 246761
             </p>
             <p className="font-semibold text-emerald-700">
-              Powered by Real-Time Firebase Firestore Sync
+              Purana Dhampur Chungi · Kalagarh Road · Dhampur
             </p>
           </div>
         </div>

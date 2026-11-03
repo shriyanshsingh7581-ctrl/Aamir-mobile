@@ -8,10 +8,9 @@ import {
   MessageCircle,
   MapPin,
   Search,
-  ShieldCheck,
   ChevronLeft,
   ChevronRight,
-  Database,
+  Clock,
 } from 'lucide-react';
 import {
   CHARLIE_HERO_BANNERS,
@@ -30,18 +29,12 @@ interface HeroSectionProps {
   onQuickAction: (
     action: 'buy-phones' | 'sell-scrap' | 'book-repair' | 'shop-accessories'
   ) => void;
-  activeView: 'customer' | 'admin';
-  onSwitchView: (view: 'customer' | 'admin') => void;
-  isFirebaseConnected?: boolean;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   globalSearch,
   onGlobalSearchChange,
   onQuickAction,
-  activeView,
-  onSwitchView,
-  isFirebaseConnected = true,
 }) => {
   const [activeSlide, setActiveSlide] = useState(0);
 
@@ -62,7 +55,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section id="top" className="bg-[#f8fafc] border-b border-slate-200 pb-8">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 space-y-5">
-        {/* 1. Charlie Mobile Dark Navy Official App & Mode Switcher Strip */}
+        {/* 1. Charlie Mobile Dark Navy Official Store Banner (Customer Only — No Admin Button) */}
         <div className="bg-[#161f30] text-white rounded-2xl p-3.5 sm:px-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-md border border-slate-800">
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#ea580c] to-amber-500 flex items-center justify-center font-display font-extrabold text-lg text-white shrink-0 shadow">
@@ -73,11 +66,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <span className="font-display font-bold text-sm sm:text-base text-white">
                   AAMIR MOBILE DHAMPUR
                 </span>
-                <span className="text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded uppercase tracking-wider inline-flex items-center gap-1">
-                  <Database className="w-3 h-3" />
-                  {isFirebaseConnected
-                    ? 'OFFICIAL REAL-TIME FIREBASE APP'
-                    : 'OFFICIAL WEB APP'}
+                <span className="text-[10px] font-extrabold bg-amber-400/20 text-amber-300 border border-amber-400/40 px-2 py-0.5 rounded uppercase tracking-wider">
+                  SALES · IC REPAIR · 2ND-HAND &amp; SCRAP HUB
                 </span>
               </div>
               <p className="text-xs text-slate-300 mt-0.5">
@@ -100,33 +90,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
           </div>
 
-          {/* Seamless Customer Website vs Store Admin Panel Switcher */}
-          <div className="flex flex-wrap items-center gap-2 self-stretch lg:self-auto justify-between lg:justify-end">
-            <div className="flex items-center gap-1 p-1 bg-slate-950/90 border border-slate-700 rounded-xl">
-              <button
-                type="button"
-                onClick={() => onSwitchView('customer')}
-                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors whitespace-nowrap ${
-                  activeView === 'customer'
-                    ? 'bg-[#ea580c] text-white'
-                    : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                Customer Storefront
-              </button>
-              <button
-                type="button"
-                onClick={() => onSwitchView('admin')}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-colors whitespace-nowrap ${
-                  activeView === 'admin'
-                    ? 'bg-[#ea580c] text-white'
-                    : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                <span>Store Admin Panel (PIN: 7777)</span>
-              </button>
-            </div>
+          <div className="flex flex-wrap items-center gap-2.5 self-stretch lg:self-auto justify-between lg:justify-end">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-xl text-xs font-semibold text-slate-200">
+              <Clock className="w-3.5 h-3.5 text-amber-400" />
+              <span>Open Daily: 9:30 AM – 9:00 PM</span>
+            </span>
 
             <a
               href={buildWhatsAppUrl(

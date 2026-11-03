@@ -72,17 +72,26 @@ function loadFromStorage<T>(key: string, fallback: T): T {
   }
 }
 
+function detectAdminRouteFromLocation(): 'customer' | 'admin' {
+  const params = new URLSearchParams(window.location.search);
+  const path = window.location.pathname.toLowerCase();
+  const hash = window.location.hash.toLowerCase();
+  if (
+    path === '/admin' ||
+    path.startsWith('/admin/') ||
+    params.get('admin') === 'true' ||
+    hash === '#admin' ||
+    hash === '#/admin'
+  ) {
+    return 'admin';
+  }
+  return 'customer';
+}
+
 export default function App() {
-  const [activeView, setActiveView] = useState<'customer' | 'admin'>(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (
-      params.get('admin') === 'true' ||
-      window.location.pathname === '/admin'
-    ) {
-      return 'admin';
-    }
-    return 'customer';
-  });
+  const [activeView, setActiveView] = useState<'customer' | 'admin'>(() =>
+    detectAdminRouteFromLocation()
+  );
 
   const [isAdminUnlocked, setIsAdminUnlocked] = useState<boolean>(() =>
     loadFromStorage(STORAGE_KEYS.ADMIN_UNLOCKED, false)
@@ -114,6 +123,19 @@ export default function App() {
   const [globalSearch, setGlobalSearch] = useState('');
   const [phonesTab, setPhonesTab] = useState<'buy' | 'sell'>('buy');
   const [activeMobileSection, setActiveMobileSection] = useState('top');
+
+  // Sync URL navigation (/admin, ?admin=true, #admin)
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setActiveView(detectAdminRouteFromLocation());
+    };
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, []);
 
   // 1. Track Firebase Auth state
   useEffect(() => {
@@ -242,11 +264,15 @@ export default function App() {
     setActiveView(view);
     const url = new URL(window.location.href);
     if (view === 'admin') {
-      url.searchParams.set('admin', 'true');
-    } else {
+      url.pathname = '/admin';
       url.searchParams.delete('admin');
+      url.hash = '';
+    } else {
+      url.pathname = '/';
+      url.searchParams.delete('admin');
+      url.hash = '';
     }
-    window.history.replaceState({}, '', url.toString());
+    window.history.pushState({}, '', url.toString());
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -450,9 +476,6 @@ export default function App() {
               globalSearch={globalSearch}
               onGlobalSearchChange={setGlobalSearch}
               onQuickAction={handleHeroQuickAction}
-              activeView={activeView}
-              onSwitchView={handleSwitchView}
-              isFirebaseConnected={isFirebaseConnected}
             />
 
             <PhonesModule
@@ -486,9 +509,7 @@ export default function App() {
               onAddAccessoryToCart={handleAddAccessoryToCart}
             />
 
-            <ShopGalleryAndFooter
-              onOpenAdmin={() => handleSwitchView('admin')}
-            />
+            <ShopGalleryAndFooter />
           </>
         )}
       </main>

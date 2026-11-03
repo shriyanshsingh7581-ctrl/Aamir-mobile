@@ -4,7 +4,6 @@ import {
   Smartphone,
   Wrench,
   Headphones,
-  ShieldCheck,
   Home,
   Search,
   MapPin,
@@ -12,6 +11,8 @@ import {
   ChevronRight,
   PhoneCall,
   Database,
+  Banknote,
+  ArrowLeft,
 } from 'lucide-react';
 import { CHARLIE_CATEGORY_CIRCLES } from '../data/initialData';
 
@@ -106,7 +107,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Search className="w-4 h-4 text-[#ea580c] shrink-0 ml-1" />
           </div>
 
-          {/* Right: Location Pin, Call, Cart Badge & Admin Switcher */}
+          {/* Right: Location Pin, Call & Cart Badge (No Admin Button on Public Customer Storefront) */}
           <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             <a
               href="#shop-gallery-section"
@@ -117,7 +118,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }}
               className="hidden lg:flex items-center gap-1.5 text-left hover:opacity-90 transition-opacity"
             >
-              <div className=" leading-tight text-right">
+              <div className="leading-tight text-right">
                 <span className="block text-[10px] text-orange-100">
                   Store Location
                 </span>
@@ -151,24 +152,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </button>
 
-            {/* Admin / Account Button */}
-            <button
-              type="button"
-              onClick={() =>
-                onSwitchView(activeView === 'admin' ? 'customer' : 'admin')
-              }
-              className={`inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] rounded-full text-xs font-extrabold transition-colors whitespace-nowrap border ${
-                activeView === 'admin'
-                  ? 'bg-slate-950 text-amber-400 border-amber-400'
-                  : 'bg-slate-900/90 hover:bg-slate-950 text-white border-white/20'
-              }`}
-            >
-              <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-              <span className="hidden sm:inline">
-                {activeView === 'admin' ? 'Exit Admin' : 'Admin (PIN: 7777)'}
-              </span>
-              <span className="sm:hidden">Admin</span>
-            </button>
+            {/* Show "Exit Admin" ONLY when already on the separate /admin route */}
+            {activeView === 'admin' && (
+              <button
+                type="button"
+                onClick={() => onSwitchView('customer')}
+                className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] rounded-full text-xs font-extrabold bg-slate-950 text-amber-400 border border-amber-400 transition-colors whitespace-nowrap"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
+                <span>Storefront</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -258,8 +252,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Database className="w-3.5 h-3.5 text-emerald-300" />
               <span>
                 {isFirebaseConnected
-                  ? 'Firebase Real-Time DB Active'
-                  : 'Local Sync Mode'}
+                  ? 'Live Catalogue Synced'
+                  : 'Store Catalogue Active'}
               </span>
             </div>
           </div>
@@ -322,102 +316,88 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       )}
 
-      {/* Fixed Bottom Navigation Bar for Mobile (< 768px) */}
-      <nav
-        aria-label="Mobile Bottom Navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 h-14 bg-white border-t border-slate-200 grid grid-cols-5 items-center px-1 shadow-lg"
-      >
-        <button
-          type="button"
-          onClick={() => {
-            onSwitchView('customer');
-            onNavigateSection('top');
-          }}
-          className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors ${
-            activeView === 'customer' && activeMobileSection === 'top'
-              ? 'text-[#ea580c] font-bold'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
+      {/* Fixed Bottom Navigation Bar for Mobile (< 768px) — Customer-Only Tabs */}
+      {activeView === 'customer' && (
+        <nav
+          aria-label="Mobile Bottom Navigation"
+          className="md:hidden fixed bottom-0 left-0 right-0 z-40 h-14 bg-white border-t border-slate-200 grid grid-cols-5 items-center px-1 shadow-lg"
         >
-          <Home className="w-4 h-4" />
-          <span className="text-[10px] tracking-tight mt-0.5 whitespace-nowrap">
-            Home
-          </span>
-        </button>
+          <button
+            type="button"
+            onClick={() => onNavigateSection('top')}
+            className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors ${
+              activeMobileSection === 'top'
+                ? 'text-[#ea580c] font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Home className="w-4 h-4" />
+            <span className="text-[10px] tracking-tight mt-0.5 whitespace-nowrap">
+              Home
+            </span>
+          </button>
 
-        <button
-          type="button"
-          onClick={() => {
-            onSwitchView('customer');
-            onNavigateSection('phones-section');
-          }}
-          className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors ${
-            activeView === 'customer' &&
-            (activeMobileSection === 'phones-section' ||
-              activeMobileSection === 'sell-scrap-section')
-              ? 'text-[#ea580c] font-bold'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
-        >
-          <Smartphone className="w-4 h-4" />
-          <span className="text-[10px] tracking-tight mt-0.5 whitespace-nowrap">
-            Buy/Sell
-          </span>
-        </button>
+          <button
+            type="button"
+            onClick={() => onNavigateSection('phones-section')}
+            className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors ${
+              activeMobileSection === 'phones-section'
+                ? 'text-[#ea580c] font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Smartphone className="w-4 h-4" />
+            <span className="text-[10px] tracking-tight mt-0.5 whitespace-nowrap">
+              4G/5G Phones
+            </span>
+          </button>
 
-        <button
-          type="button"
-          onClick={() => {
-            onSwitchView('customer');
-            onNavigateSection('repair-section');
-          }}
-          className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors ${
-            activeView === 'customer' &&
-            activeMobileSection === 'repair-section'
-              ? 'text-[#ea580c] font-bold'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
-        >
-          <Wrench className="w-4 h-4" />
-          <span className="text-[10px] tracking-tight mt-0.5 whitespace-nowrap">
-            IC Repair
-          </span>
-        </button>
+          <button
+            type="button"
+            onClick={() => onNavigateSection('sell-scrap-section')}
+            className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors ${
+              activeMobileSection === 'sell-scrap-section'
+                ? 'text-[#ea580c] font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Banknote className="w-4 h-4" />
+            <span className="text-[10px] tracking-tight mt-0.5 whitespace-nowrap">
+              Sell/Scrap
+            </span>
+          </button>
 
-        <button
-          type="button"
-          onClick={() => {
-            onSwitchView('customer');
-            onNavigateSection('accessories-section');
-          }}
-          className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors ${
-            activeView === 'customer' &&
-            activeMobileSection === 'accessories-section'
-              ? 'text-[#ea580c] font-bold'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
-        >
-          <Headphones className="w-4 h-4" />
-          <span className="text-[10px] tracking-tight mt-0.5 whitespace-nowrap">
-            Accessories
-          </span>
-        </button>
+          <button
+            type="button"
+            onClick={() => onNavigateSection('repair-section')}
+            className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors ${
+              activeMobileSection === 'repair-section'
+                ? 'text-[#ea580c] font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Wrench className="w-4 h-4" />
+            <span className="text-[10px] tracking-tight mt-0.5 whitespace-nowrap">
+              IC Repair
+            </span>
+          </button>
 
-        <button
-          type="button"
-          onClick={() => onSwitchView('admin')}
-          className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors ${
-            activeView === 'admin'
-              ? 'text-[#ea580c] font-bold'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
-        >
-          <ShieldCheck className="w-4 h-4" />
-          <span className="text-[10px] tracking-tight mt-0.5 whitespace-nowrap">
-            Admin
-          </span>
-        </button>
-      </nav>
+          <button
+            type="button"
+            onClick={() => onNavigateSection('accessories-section')}
+            className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors ${
+              activeMobileSection === 'accessories-section'
+                ? 'text-[#ea580c] font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Headphones className="w-4 h-4" />
+            <span className="text-[10px] tracking-tight mt-0.5 whitespace-nowrap">
+              Accessories
+            </span>
+          </button>
+        </nav>
+      )}
     </>
   );
 };
