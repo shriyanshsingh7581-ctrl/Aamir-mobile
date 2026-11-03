@@ -1,0 +1,6 @@
+node_modules
+.playwright-cli
+*.log
+.DS_Store
+DRAFT_firestore.rules
+security_spec.md

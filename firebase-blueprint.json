@@ -1,0 +1,491 @@
+{
+  "entities": {
+    "SecondHandPhone": {
+      "title": "SecondHandPhone",
+      "description": "A new or certified second-hand 4G/5G smartphone listed at Aamir Mobile Dhampur.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the phone",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "brand": {
+          "type": "string",
+          "description": "Phone manufacturer brand",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "model": {
+          "type": "string",
+          "description": "Phone model name",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "network": {
+          "type": "string",
+          "description": "Supported cellular generation",
+          "enum": ["5G", "4G"]
+        },
+        "ramStorage": {
+          "type": "string",
+          "description": "RAM and internal storage configuration",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "batteryHealth": {
+          "type": "number",
+          "description": "Battery health percentage (1 to 100)"
+        },
+        "conditionBadge": {
+          "type": "string",
+          "description": "Condition badge shown on product card",
+          "enum": ["Mint Condition", "Warranty Available", "Superb Condition", "Box Open"]
+        },
+        "price": {
+          "type": "number",
+          "description": "Selling price in INR"
+        },
+        "mrp": {
+          "type": "number",
+          "description": "Original MRP in INR"
+        },
+        "image": {
+          "type": "string",
+          "description": "Product image URL or asset path",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "color": {
+          "type": "string",
+          "description": "Device color variant",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "inStock": {
+          "type": "boolean",
+          "description": "Whether the phone is currently in stock"
+        },
+        "verifiedNote": {
+          "type": "string",
+          "description": "Technician verification note",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "Admin UID who listed the phone",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update"
+        }
+      },
+      "required": [
+        "id",
+        "brand",
+        "model",
+        "network",
+        "ramStorage",
+        "batteryHealth",
+        "conditionBadge",
+        "price",
+        "mrp",
+        "image",
+        "color",
+        "inStock",
+        "verifiedNote",
+        "ownerId",
+        "createdAt"
+      ]
+    },
+    "AccessoryItem": {
+      "title": "AccessoryItem",
+      "description": "A mobile accessory, smart gadget, or appliance sold at Aamir Mobile Dhampur.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the accessory",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Product title",
+          "minLength": 1,
+          "maxLength": 140
+        },
+        "category": {
+          "type": "string",
+          "description": "Accessory category",
+          "enum": [
+            "TWS Earbuds & Neckbands",
+            "Fast Chargers & Adapters",
+            "Data Cables",
+            "Back Covers & Cases",
+            "Tempered Glass",
+            "Power Banks & Speakers"
+          ]
+        },
+        "brand": {
+          "type": "string",
+          "description": "Accessory brand or compatibility label",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "price": {
+          "type": "number",
+          "description": "Selling price in INR"
+        },
+        "mrp": {
+          "type": "number",
+          "description": "MRP in INR"
+        },
+        "discountLabel": {
+          "type": "string",
+          "description": "Discount percentage badge text",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "image": {
+          "type": "string",
+          "description": "Product image URL",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "specs": {
+          "type": "string",
+          "description": "Key product specifications",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "inStock": {
+          "type": "boolean",
+          "description": "Availability flag"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "Admin UID who created the item",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "category",
+        "brand",
+        "price",
+        "mrp",
+        "discountLabel",
+        "image",
+        "specs",
+        "inStock",
+        "ownerId",
+        "createdAt"
+      ]
+    },
+    "RepairAppointment": {
+      "title": "RepairAppointment",
+      "description": "An IC-level or general mobile repair booking token.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "tokenId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "customerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "customerPhone": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 20
+        },
+        "brandModel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "issues": {
+          "type": "string",
+          "description": "Comma-separated list of selected repair issues",
+          "minLength": 1,
+          "maxLength": 400
+        },
+        "preferredSlot": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "serviceType": {
+          "type": "string",
+          "enum": ["Visit Dhampur Shop", "Local Pickup Enquiry"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Pending", "In Repair Lab", "Ready for Delivery"]
+        },
+        "ownerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "tokenId",
+        "customerName",
+        "customerPhone",
+        "brandModel",
+        "issues",
+        "preferredSlot",
+        "serviceType",
+        "status",
+        "ownerId",
+        "createdAt"
+      ]
+    },
+    "SellPhoneLead": {
+      "title": "SellPhoneLead",
+      "description": "Customer request to sell a working 2nd-hand phone or dead/scrap phone.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["working", "scrap"]
+        },
+        "brand": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "conditionOrFault": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "expectedPrice": {
+          "type": "number"
+        },
+        "customerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "customerPhone": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 20
+        },
+        "status": {
+          "type": "string",
+          "enum": ["New Lead", "Quoted on WhatsApp", "Purchased"]
+        },
+        "ownerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "mode",
+        "brand",
+        "model",
+        "conditionOrFault",
+        "expectedPrice",
+        "customerName",
+        "customerPhone",
+        "status",
+        "ownerId",
+        "createdAt"
+      ]
+    },
+    "CustomerOrder": {
+      "title": "CustomerOrder",
+      "description": "Customer cart checkout order for phones or accessories.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "orderNumber": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "customerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "customerPhone": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 20
+        },
+        "deliveryMode": {
+          "type": "string",
+          "enum": [
+            "Store Pickup (Purana Dhampur Chungi)",
+            "Dhampur Local Delivery"
+          ]
+        },
+        "itemsSummary": {
+          "type": "string",
+          "description": "Formatted summary of ordered items",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "totalAmount": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Confirmed", "Ready for Pickup", "Completed"]
+        },
+        "ownerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "orderNumber",
+        "customerName",
+        "customerPhone",
+        "deliveryMode",
+        "itemsSummary",
+        "totalAmount",
+        "status",
+        "ownerId",
+        "createdAt"
+      ]
+    },
+    "AdminProfile": {
+      "title": "AdminProfile",
+      "description": "Trusted admin registry document.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 120
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/phones/{phoneId}": {
+      "schema": { "$ref": "#/entities/SecondHandPhone" },
+      "description": "Publicly readable catalogue of new and second-hand 4G/5G smartphones."
+    },
+    "/accessories/{accessoryId}": {
+      "schema": { "$ref": "#/entities/AccessoryItem" },
+      "description": "Publicly readable catalogue of mobile accessories, audio gear, and smart gadgets."
+    },
+    "/appointments/{appointmentId}": {
+      "schema": { "$ref": "#/entities/RepairAppointment" },
+      "description": "Private customer IC-level repair bookings, readable by owner or store admin."
+    },
+    "/sellLeads/{leadId}": {
+      "schema": { "$ref": "#/entities/SellPhoneLead" },
+      "description": "Private customer requests to sell old or dead/scrap phones, readable by owner or store admin."
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/CustomerOrder" },
+      "description": "Private customer orders from the shopping cart, readable by owner or store admin."
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/AdminProfile" },
+      "description": "Trusted store administrator directory."
+    }
+  }
+}

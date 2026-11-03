@@ -1,0 +1,6 @@
+{
+  "name": "Aamir Mobile Dhampur — Sales, IC Repair, Accessories & Scrap Phone Hub",
+  "description": "Dhampur's #1 Mobile Hub at Purana Dhampur Chungi, Kalagarh Road. Buy & sell 4G/5G second-hand phones, sell dead or scrap phones for instant cash, book microscope IC-level repair, and shop original mobile accessories.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

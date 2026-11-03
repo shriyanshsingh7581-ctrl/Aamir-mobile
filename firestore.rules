@@ -1,0 +1,330 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Hardened Global Primitives
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'singhshriyansh51@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // 3. Entity Validation Blueprints
+    function isValidSecondHandPhone(data) {
+      return data.keys().hasAll([
+        'id', 'brand', 'model', 'network', 'ramStorage', 'batteryHealth',
+        'conditionBadge', 'price', 'mrp', 'image', 'color', 'inStock',
+        'verifiedNote', 'ownerId', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'id', 'brand', 'model', 'network', 'ramStorage', 'batteryHealth',
+        'conditionBadge', 'price', 'mrp', 'image', 'color', 'inStock',
+        'verifiedNote', 'ownerId', 'createdAt', 'updatedAt'
+      ]) &&
+      isValidId(data.id) &&
+      data.brand is string && data.brand.size() >= 1 && data.brand.size() <= 60 &&
+      data.model is string && data.model.size() >= 1 && data.model.size() <= 120 &&
+      data.network is string && (data.network == '5G' || data.network == '4G') &&
+      data.ramStorage is string && data.ramStorage.size() >= 1 && data.ramStorage.size() <= 60 &&
+      data.batteryHealth is number && data.batteryHealth >= 1 && data.batteryHealth <= 100 &&
+      data.conditionBadge is string && (
+        data.conditionBadge == 'Mint Condition' ||
+        data.conditionBadge == 'Warranty Available' ||
+        data.conditionBadge == 'Superb Condition' ||
+        data.conditionBadge == 'Box Open'
+      ) &&
+      data.price is number && data.price >= 0 && data.price <= 500000 &&
+      data.mrp is number && data.mrp >= 0 && data.mrp <= 600000 &&
+      data.image is string && data.image.size() >= 1 && data.image.size() <= 500 &&
+      data.color is string && data.color.size() >= 1 && data.color.size() <= 80 &&
+      data.inStock is bool &&
+      data.verifiedNote is string && data.verifiedNote.size() >= 1 && data.verifiedNote.size() <= 240 &&
+      isValidId(data.ownerId) &&
+      data.ownerId == request.auth.uid &&
+      data.createdAt is timestamp &&
+      (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    function isValidAccessoryItem(data) {
+      return data.keys().hasAll([
+        'id', 'name', 'category', 'brand', 'price', 'mrp',
+        'discountLabel', 'image', 'specs', 'inStock', 'ownerId', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'id', 'name', 'category', 'brand', 'price', 'mrp',
+        'discountLabel', 'image', 'specs', 'inStock', 'ownerId', 'createdAt', 'updatedAt'
+      ]) &&
+      isValidId(data.id) &&
+      data.name is string && data.name.size() >= 1 && data.name.size() <= 140 &&
+      data.category is string && (
+        data.category == 'TWS Earbuds & Neckbands' ||
+        data.category == 'Fast Chargers & Adapters' ||
+        data.category == 'Data Cables' ||
+        data.category == 'Back Covers & Cases' ||
+        data.category == 'Tempered Glass' ||
+        data.category == 'Power Banks & Speakers'
+      ) &&
+      data.brand is string && data.brand.size() >= 1 && data.brand.size() <= 100 &&
+      data.price is number && data.price >= 0 && data.price <= 200000 &&
+      data.mrp is number && data.mrp >= 0 && data.mrp <= 250000 &&
+      data.discountLabel is string && data.discountLabel.size() >= 1 && data.discountLabel.size() <= 40 &&
+      data.image is string && data.image.size() >= 1 && data.image.size() <= 500 &&
+      data.specs is string && data.specs.size() >= 1 && data.specs.size() <= 240 &&
+      data.inStock is bool &&
+      isValidId(data.ownerId) &&
+      data.ownerId == request.auth.uid &&
+      data.createdAt is timestamp &&
+      (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    function isValidRepairAppointment(data) {
+      return data.keys().hasAll([
+        'id', 'tokenId', 'customerName', 'customerPhone', 'brandModel',
+        'issues', 'preferredSlot', 'serviceType', 'status', 'ownerId', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'id', 'tokenId', 'customerName', 'customerPhone', 'brandModel',
+        'issues', 'preferredSlot', 'serviceType', 'status', 'ownerId', 'createdAt', 'updatedAt'
+      ]) &&
+      isValidId(data.id) &&
+      data.tokenId is string && data.tokenId.size() >= 1 && data.tokenId.size() <= 40 &&
+      data.customerName is string && data.customerName.size() >= 1 && data.customerName.size() <= 100 &&
+      data.customerPhone is string && data.customerPhone.size() >= 10 && data.customerPhone.size() <= 20 &&
+      data.brandModel is string && data.brandModel.size() >= 1 && data.brandModel.size() <= 120 &&
+      data.issues is string && data.issues.size() >= 1 && data.issues.size() <= 400 &&
+      data.preferredSlot is string && data.preferredSlot.size() >= 1 && data.preferredSlot.size() <= 100 &&
+      data.serviceType is string && (
+        data.serviceType == 'Visit Dhampur Shop' ||
+        data.serviceType == 'Local Pickup Enquiry'
+      ) &&
+      data.status is string && (
+        data.status == 'Pending' ||
+        data.status == 'In Repair Lab' ||
+        data.status == 'Ready for Delivery'
+      ) &&
+      isValidId(data.ownerId) &&
+      data.ownerId == request.auth.uid &&
+      data.createdAt is timestamp &&
+      (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    function isValidSellPhoneLead(data) {
+      return data.keys().hasAll([
+        'id', 'mode', 'brand', 'model', 'conditionOrFault',
+        'expectedPrice', 'customerName', 'customerPhone', 'status', 'ownerId', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'id', 'mode', 'brand', 'model', 'conditionOrFault',
+        'expectedPrice', 'customerName', 'customerPhone', 'status', 'ownerId', 'createdAt', 'updatedAt'
+      ]) &&
+      isValidId(data.id) &&
+      data.mode is string && (data.mode == 'working' || data.mode == 'scrap') &&
+      data.brand is string && data.brand.size() >= 1 && data.brand.size() <= 60 &&
+      data.model is string && data.model.size() >= 1 && data.model.size() <= 120 &&
+      data.conditionOrFault is string && data.conditionOrFault.size() >= 1 && data.conditionOrFault.size() <= 200 &&
+      data.expectedPrice is number && data.expectedPrice > 0 && data.expectedPrice <= 500000 &&
+      data.customerName is string && data.customerName.size() >= 1 && data.customerName.size() <= 100 &&
+      data.customerPhone is string && data.customerPhone.size() >= 10 && data.customerPhone.size() <= 20 &&
+      data.status is string && (
+        data.status == 'New Lead' ||
+        data.status == 'Quoted on WhatsApp' ||
+        data.status == 'Purchased'
+      ) &&
+      isValidId(data.ownerId) &&
+      data.ownerId == request.auth.uid &&
+      data.createdAt is timestamp &&
+      (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    function isValidCustomerOrder(data) {
+      return data.keys().hasAll([
+        'id', 'orderNumber', 'customerName', 'customerPhone',
+        'deliveryMode', 'itemsSummary', 'totalAmount', 'status', 'ownerId', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'id', 'orderNumber', 'customerName', 'customerPhone',
+        'deliveryMode', 'itemsSummary', 'totalAmount', 'status', 'ownerId', 'createdAt', 'updatedAt'
+      ]) &&
+      isValidId(data.id) &&
+      data.orderNumber is string && data.orderNumber.size() >= 1 && data.orderNumber.size() <= 40 &&
+      data.customerName is string && data.customerName.size() >= 1 && data.customerName.size() <= 100 &&
+      data.customerPhone is string && data.customerPhone.size() >= 10 && data.customerPhone.size() <= 20 &&
+      data.deliveryMode is string && (
+        data.deliveryMode == 'Store Pickup (Purana Dhampur Chungi)' ||
+        data.deliveryMode == 'Dhampur Local Delivery'
+      ) &&
+      data.itemsSummary is string && data.itemsSummary.size() >= 1 && data.itemsSummary.size() <= 500 &&
+      data.totalAmount is number && data.totalAmount >= 0 && data.totalAmount <= 1000000 &&
+      data.status is string && (
+        data.status == 'Confirmed' ||
+        data.status == 'Ready for Pickup' ||
+        data.status == 'Completed'
+      ) &&
+      isValidId(data.ownerId) &&
+      data.ownerId == request.auth.uid &&
+      data.createdAt is timestamp &&
+      (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    function isValidAdminProfile(data) {
+      return data.keys().hasAll(['uid', 'email', 'createdAt']) &&
+      data.keys().hasOnly(['uid', 'email', 'createdAt']) &&
+      isValidId(data.uid) &&
+      data.email is string && data.email.size() >= 3 && data.email.size() <= 120 &&
+      data.createdAt is timestamp;
+    }
+
+    // 4. Collection Match Blocks
+    match /phones/{phoneId} {
+      allow get: if isValidId(phoneId) && existing().inStock == true;
+      allow list: if existing().inStock == true;
+      allow create: if isSignedIn() && isValidId(phoneId) &&
+        incoming().id == phoneId &&
+        incoming().createdAt == request.time &&
+        isValidSecondHandPhone(incoming()) &&
+        isAdmin();
+      allow update: if isSignedIn() && isValidId(phoneId) &&
+        isValidSecondHandPhone(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          isAdmin() ||
+          (existing().ownerId == request.auth.uid &&
+           incoming().diff(existing()).affectedKeys().hasOnly(['price', 'mrp', 'inStock', 'conditionBadge', 'updatedAt']))
+        );
+      allow delete: if isSignedIn() && isValidId(phoneId) && isAdmin();
+    }
+
+    match /accessories/{accessoryId} {
+      allow get: if isValidId(accessoryId) && existing().inStock == true;
+      allow list: if existing().inStock == true;
+      allow create: if isSignedIn() && isValidId(accessoryId) &&
+        incoming().id == accessoryId &&
+        incoming().createdAt == request.time &&
+        isValidAccessoryItem(incoming()) &&
+        isAdmin();
+      allow update: if isSignedIn() && isValidId(accessoryId) &&
+        isValidAccessoryItem(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          isAdmin() ||
+          (existing().ownerId == request.auth.uid &&
+           incoming().diff(existing()).affectedKeys().hasOnly(['price', 'mrp', 'inStock', 'discountLabel', 'updatedAt']))
+        );
+      allow delete: if isSignedIn() && isValidId(accessoryId) && isAdmin();
+    }
+
+    match /appointments/{appointmentId} {
+      allow get: if isSignedIn() && isValidId(appointmentId) && (
+        existing().ownerId == request.auth.uid || isAdmin()
+      );
+      allow list: if isSignedIn() && (
+        existing().ownerId == request.auth.uid || isAdmin()
+      );
+      allow create: if isSignedIn() && isValidId(appointmentId) &&
+        incoming().id == appointmentId &&
+        incoming().createdAt == request.time &&
+        isValidRepairAppointment(incoming());
+      allow update: if isSignedIn() && isValidId(appointmentId) &&
+        isValidRepairAppointment(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          isAdmin() ||
+          (existing().ownerId == request.auth.uid &&
+           existing().status != 'Ready for Delivery' &&
+           incoming().diff(existing()).affectedKeys().hasOnly(['preferredSlot', 'status', 'updatedAt']))
+        );
+      allow delete: if isSignedIn() && isValidId(appointmentId) && isAdmin();
+    }
+
+    match /sellLeads/{leadId} {
+      allow get: if isSignedIn() && isValidId(leadId) && (
+        existing().ownerId == request.auth.uid || isAdmin()
+      );
+      allow list: if isSignedIn() && (
+        existing().ownerId == request.auth.uid || isAdmin()
+      );
+      allow create: if isSignedIn() && isValidId(leadId) &&
+        incoming().id == leadId &&
+        incoming().createdAt == request.time &&
+        isValidSellPhoneLead(incoming());
+      allow update: if isSignedIn() && isValidId(leadId) &&
+        isValidSellPhoneLead(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          isAdmin() ||
+          (existing().ownerId == request.auth.uid &&
+           existing().status != 'Purchased' &&
+           incoming().diff(existing()).affectedKeys().hasOnly(['expectedPrice', 'status', 'updatedAt']))
+        );
+      allow delete: if isSignedIn() && isValidId(leadId) && isAdmin();
+    }
+
+    match /orders/{orderId} {
+      allow get: if isSignedIn() && isValidId(orderId) && (
+        existing().ownerId == request.auth.uid || isAdmin()
+      );
+      allow list: if isSignedIn() && (
+        existing().ownerId == request.auth.uid || isAdmin()
+      );
+      allow create: if isSignedIn() && isValidId(orderId) &&
+        incoming().id == orderId &&
+        incoming().createdAt == request.time &&
+        isValidCustomerOrder(incoming());
+      allow update: if isSignedIn() && isValidId(orderId) &&
+        isValidCustomerOrder(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          isAdmin() ||
+          (existing().ownerId == request.auth.uid &&
+           existing().status != 'Completed' &&
+           incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']))
+        );
+      allow delete: if isSignedIn() && isValidId(orderId) && isAdmin();
+    }
+
+    match /admins/{adminId} {
+      allow get: if isSignedIn() && isValidId(adminId) && (
+        request.auth.uid == adminId || isAdmin()
+      );
+      allow list: if isSignedIn() && isAdmin() && existing().uid is string;
+      allow create: if isSignedIn() && isValidId(adminId) &&
+        incoming().uid == adminId &&
+        incoming().createdAt == request.time &&
+        isValidAdminProfile(incoming()) &&
+        isAdmin();
+      allow update, delete: if false;
+    }
+  }
+}
